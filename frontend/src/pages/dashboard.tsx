@@ -1,7 +1,6 @@
 import Head from "next/head";
 import Image from "next/image";
 
-import { Button } from "../components/ui/button";
 import {
   Card,
   CardContent,
@@ -15,12 +14,12 @@ import {
   TabsList,
   TabsTrigger,
 } from "../components/ui/tabs";
-import { CalendarDateRangePicker } from "~/components/widgets/date-range-picker";
 import { Overview } from "../components/widgets/overview";
 import { PlantHealth } from "../components/widgets/plant-health";
 import { FloatingNav } from "~/components/ui/floating-navbar";
 import { IconHome, IconMessage, IconUser } from "@tabler/icons-react";
-
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function Dashboard() {
   const navItems = [
@@ -44,6 +43,21 @@ export default function Dashboard() {
       ),
     },
   ];
+
+  const [recommendation, setRecommendation] = useState("");
+
+
+  useEffect(() => {
+    axios.post("http://localhost:11434/api/generate", {
+      model: "tinyllama",
+      prompt: "Why is the sky blue?"
+    }).then(response => {
+      setRecommendation(response.data);
+    }).catch(error => {
+      console.error("Error fetching recommendation:", error);
+    });
+  }, [])
+
   return (
     <>
       <Head>
@@ -80,14 +94,13 @@ export default function Dashboard() {
             <div className="flex items-center justify-between space-y-2">
               <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
               <div className="flex items-center space-x-2">
-                <CalendarDateRangePicker />
+                {/* <CalendarDateRangePicker /> */}
               </div>
             </div>
             <Tabs defaultValue="overview" className="space-y-4">
               <TabsList>
                 <TabsTrigger value="overview">Overview</TabsTrigger>
                 <TabsTrigger value="recommendation">Recommendation</TabsTrigger>
-                <TabsTrigger value="notifications">Notifications</TabsTrigger>
               </TabsList>
               <TabsContent value="overview" className="space-y-4">
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -216,6 +229,19 @@ export default function Dashboard() {
                     </CardContent>
                   </Card>
                 </div>
+              </TabsContent>
+              <TabsContent value="recommendation" className="space-y-4">
+                  <Card>
+                    <CardHeader>
+                        <CardTitle>How can I improve my garden?</CardTitle>
+                        <CardDescription>
+                          Learn how to improve your garden.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      {recommendation}
+                    </CardContent>
+                  </Card>
               </TabsContent>
             </Tabs>
           </div>

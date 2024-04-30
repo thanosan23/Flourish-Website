@@ -39,6 +39,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="relative w-full scroll-smooth focus:scroll-auto">
+        <p className="absolute top-4 left-4 text-2xl font-bold dark:text-white z-10">Flourish.</p>
         <FloatingNav navItems={navItems} />
         <div id="home">
           <AuroraBackground>
