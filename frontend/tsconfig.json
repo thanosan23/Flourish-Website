@@ -36,7 +36,7 @@
     "**/*.tsx",
     "**/*.cjs",
     "**/*.js",
-    ".next/types/**/*.ts"
+    "Flourish/.next/types/**/*.ts"
   ],
   "exclude": ["node_modules"]
 }

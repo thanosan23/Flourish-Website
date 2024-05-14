@@ -45,16 +45,28 @@ export default function Dashboard() {
   ];
 
   const [recommendation, setRecommendation] = useState("");
-
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     axios.post("http://localhost:11434/api/generate", {
       model: "tinyllama",
-      prompt: "Why is the sky blue?"
+      prompt: "Imagine that you are a gardening consultant. How can I improve my garden? Be really short and concise. The maximum should be 50 characters."
     }).then(response => {
-      setRecommendation(response.data);
+      let data = response.data.trim().split("\n").map((item: string) => JSON.parse(item));
+      let result = "";
+      let i = 0;
+      let current = data[0];
+      while(!current.done) {
+        result += current.response;
+        i++;
+        current = data[i];
+        setRecommendation(result);
+      }
+      setLoading(false);
     }).catch(error => {
       console.error("Error fetching recommendation:", error);
+      setLoading(false);
     });
   }, [])
 
@@ -239,7 +251,11 @@ export default function Dashboard() {
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      {recommendation}
+                      <div>
+                      { loading ? 
+                      <p>Loading...</p>
+                      : recommendation }
+                      </div>
                     </CardContent>
                   </Card>
               </TabsContent>
